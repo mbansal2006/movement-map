@@ -42,6 +42,7 @@ export default function MovementMap() {
             new mapboxgl.Popup().setHTML(`
               <h3>${m.name}</h3>
               <p>${m.description}</p>
+              <p class='text-sm text-gray-500 mt-1'><strong>Address:</strong> ${m.address}</p>
             `)
           )
           .addTo(map);
@@ -51,14 +52,13 @@ export default function MovementMap() {
 
   const geocodeAddress = async (address) => {
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-        address
-      )}.json?access_token=${mapboxgl.accessToken}`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxgl.accessToken}`
     );
     const data = await response.json();
     if (data.features && data.features.length > 0) {
       const [lng, lat] = data.features[0].center;
-      return { lat, lng };
+      const place_name = data.features[0].place_name;
+      return { lat, lng, place_name };
     } else {
       throw new Error("Location not found");
     }
@@ -67,10 +67,11 @@ export default function MovementMap() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { lat, lng } = await geocodeAddress(form.address);
+      const { lat, lng, place_name } = await geocodeAddress(form.address);
       const newMovement = {
         name: form.name,
         description: form.description,
+        address: place_name, // save the formatted address
         lat,
         lng,
       };
