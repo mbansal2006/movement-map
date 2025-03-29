@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -28,7 +27,7 @@ export default function MovementMap() {
   useEffect(() => {
     const loadMovements = async () => {
       const querySnapshot = await getDocs(collection(db, "movements"));
-      const data = querySnapshot.docs.map(doc => doc.data());
+      const data = querySnapshot.docs.map((doc) => doc.data());
       setMovements(data);
     };
     loadMovements();
@@ -77,8 +76,8 @@ export default function MovementMap() {
   };
 
   return (
-    <div className="w-full h-screen grid grid-cols-1 md:grid-cols-3">
-      <div className="col-span-1 p-4 bg-white shadow-xl z-10">
+    <div className="flex flex-col md:grid md:grid-cols-3 h-screen">
+      <div className="p-4 bg-white shadow-xl overflow-y-auto max-h-[50vh] md:max-h-none md:h-full">
         <h1 className="text-2xl font-bold mb-4">Add a Movement</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-2">
           <input
@@ -107,7 +106,7 @@ export default function MovementMap() {
           </button>
         </form>
       </div>
-      <div id="map" className="col-span-2 h-full" />
+      <div id="map" className="flex-1 md:col-span-2 h-[300px] md:h-full" />
     </div>
   );
 }
