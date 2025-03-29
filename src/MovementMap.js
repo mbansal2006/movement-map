@@ -41,7 +41,7 @@ export default function MovementMap() {
           .setPopup(new mapboxgl.Popup().setHTML(`
             <h3>${m.name}</h3>
             <p>${m.description}</p>
-            <p class='text-sm text-gray-500 mt-1'><strong>Address:</strong> ${m.address}</p>
+            <p class='text-sm text-gray-500 mt-1'><strong>Address:</strong> ${m.address ?? "Not available"}</p>
           `))
           .addTo(map);
       });
@@ -55,7 +55,8 @@ export default function MovementMap() {
     const data = await response.json();
     if (data.features && data.features.length > 0) {
       const [lng, lat] = data.features[0].center;
-      return { lat, lng };
+      const place_name = data.features[0].place_name;
+      return { lat, lng, place_name };
     } else {
       throw new Error("Location not found");
     }
@@ -64,11 +65,11 @@ export default function MovementMap() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { lat, lng } = await geocodeAddress(form.address);
+      const { lat, lng, place_name } = await geocodeAddress(form.address);
       const newMovement = {
         name: form.name,
         description: form.description,
-        address: form.address,
+        address: place_name,
         lat,
         lng,
       };
