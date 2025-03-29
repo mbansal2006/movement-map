@@ -38,11 +38,12 @@ export default function MovementMap() {
       movements.forEach((m) => {
         new mapboxgl.Marker()
           .setLngLat([m.lng, m.lat])
-          .setPopup(new mapboxgl.Popup().setHTML(`
-            <h3>${m.name}</h3>
-            <p>${m.description}</p>
-            <p class='text-sm text-gray-500 mt-1'><strong>Address:</strong> ${m.address ?? "Not available"}</p>
-          `))
+          .setPopup(
+            new mapboxgl.Popup().setHTML(`
+              <h3>${m.name}</h3>
+              <p>${m.description}</p>
+            `)
+          )
           .addTo(map);
       });
     }
@@ -50,13 +51,14 @@ export default function MovementMap() {
 
   const geocodeAddress = async (address) => {
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxgl.accessToken}`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+        address
+      )}.json?access_token=${mapboxgl.accessToken}`
     );
     const data = await response.json();
     if (data.features && data.features.length > 0) {
       const [lng, lat] = data.features[0].center;
-      const place_name = data.features[0].place_name;
-      return { lat, lng, place_name };
+      return { lat, lng };
     } else {
       throw new Error("Location not found");
     }
@@ -65,11 +67,10 @@ export default function MovementMap() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { lat, lng, place_name } = await geocodeAddress(form.address);
+      const { lat, lng } = await geocodeAddress(form.address);
       const newMovement = {
         name: form.name,
         description: form.description,
-        address: place_name,
         lat,
         lng,
       };
@@ -102,12 +103,15 @@ export default function MovementMap() {
           />
           <input
             className="p-2 border rounded"
-            placeholder="Address (e.g. NYC, 1600 Pennsylvania Ave, etc)"
+            placeholder="Address"
             value={form.address}
             onChange={(e) => setForm({ ...form, address: e.target.value })}
             required
           />
-          <button type="submit" className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+          <button
+            type="submit"
+            className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
             Submit Movement
           </button>
         </form>
