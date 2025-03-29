@@ -38,7 +38,11 @@ export default function MovementMap() {
       movements.forEach((m) => {
         new mapboxgl.Marker()
           .setLngLat([m.lng, m.lat])
-          .setPopup(new mapboxgl.Popup().setHTML(`<h3>${m.name}</h3><p>${m.description}</p><p class='text-sm text-gray-500 mt-1'><strong>Location:</strong> ${m.address || "(coordinates only)"}</p>`))
+          .setPopup(new mapboxgl.Popup().setHTML(`
+            <h3>${m.name}</h3>
+            <p>${m.description}</p>
+            <p class='text-sm text-gray-500 mt-1'><strong>Address:</strong> ${m.address}</p>
+          `))
           .addTo(map);
       });
     }
